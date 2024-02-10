@@ -66,23 +66,29 @@ fn main() {
         .unwrap_or_else(|e| panic!("{}", e));
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
-        clear_screen(&mut buffer, 0x00_00_00_00);
-        for edge in &spanning_tree {
-            // Convert maze grid coordinates to pixel coordinates
-            let x1 = edge.0.x * CELL_SIZE;
-            let y1 = edge.0.y * CELL_SIZE;
-            let x2 = edge.1.x * CELL_SIZE;
-            let y2 = edge.1.y * CELL_SIZE;
-            
-            // Draw a line between the two points
-            draw_line(&mut buffer, WIDTH, HEIGHT, x1, y1, x2, y2, 0xFF_FF_FF_FF);
-        }
-        window.update_with_buffer(&buffer, WIDTH, HEIGHT).unwrap();
+        draw_maze(&mut buffer, &spanning_tree, CELL_SIZE, WIDTH, HEIGHT, &mut window);
     }
 }
 
 
-fn draw_line(buffer: &mut Vec<u32>, width: usize, height: usize, mut x0: usize, mut y0: usize, mut x1: usize, mut y1: usize, color: u32) {
+fn draw_maze(buffer: &mut Vec<u32>, spanning_tree: &[(Coord, Coord)], cell_size: usize, width: usize, height: usize, window: &mut Window) {
+    //clear_screen(buffer, 0x00_00_00_00);
+    for edge in spanning_tree {
+        if !window.is_open() || window.is_key_down(Key::Escape){
+            println!("CLOSE");
+            return;
+        }
+        let x1 = edge.0.x * cell_size;
+        let y1 = edge.0.y * cell_size;
+        let x2 = edge.1.x * cell_size;
+        let y2 = edge.1.y * cell_size;
+        draw_line(buffer, width, height, x1, y1, x2, y2, 0xFF_FF_FF_FF);
+        window.update_with_buffer(buffer, width, height).unwrap();
+    }
+}
+
+
+fn draw_line(buffer: &mut Vec<u32>, width: usize, height: usize, mut x0: usize, mut y0: usize, x1: usize,  y1: usize, color: u32) {
     let dx = (x1 as isize - x0 as isize).abs() as isize;
     let dy = -(y1 as isize - y0 as isize).abs() as isize;
     let sx = if x0 < x1 { 1 } else { -1 };
