@@ -121,7 +121,7 @@ fn main() {
             println!("Deepest level: {}", max_level);
             draw_maze(&mut buffer, &spanning_tree, CELL_SIZE, WIDTH, HEIGHT, &mut window);
             dfs(&mut buffer, &spanning_tree, CELL_SIZE, WIDTH, HEIGHT, &mut window, 0, max_level);    
-            drawn = false;
+            drawn = true;
         }
         
         window.update();
